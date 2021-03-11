@@ -317,7 +317,7 @@ NOTE</td>
 ```
 [Funciones en SQL](https://diego.com.es/principales-funciones-en-sql)
 
-### join, 
+### INNER JOIN, IN, ON 
 
 ![joins](https://static.platzi.com/media/user_upload/FB_IMG_1464718822700-8fbde636-f214-40fd-8478-84114dddc1d2.jpg)
 ![joins](https://static.platzi.com/media/user_upload/FB_IMG_1464718826308-8604c822-a5de-4857-8265-61480fd706dd.jpg)
@@ -327,9 +327,199 @@ NOTE</td>
 
 ```sql
   
-  
+  -- Listar todos los autores con ID entre 1 y 5 con los filtro mayor y menor igual
+SELECT * FROM authors WHERE author_id > 0 AND author_id <= 5;
+
+-- Listar todos los autores con ID entre 1 y 5 con el filtro BETWEEN
+SELECT * FROM authors WHERE author_id BETWEEN 1 AND 5;
+
+-- Listar los libros con filtro de author_id entre 1 y 5
+SELECT book_id, author_id, title FROM books WHERE author_id BETWEEN 1 AND 5;
+
+-- Listar nombre y titulo de libros mediante el JOIN de las tablas books y authors
+SELECT b.book_id, a.name, a.author_id, b.title
+FROM books AS b
+JOIN authors AS a
+  ON a.author_id = b.author_id
+WHERE a.author_id BETWEEN 1 AND 5;
+
+-- Listar transactions con detalle de nombre, titulo y tipo. Con los filtro genero = F y tipo = Vendido.
+-- Haciendo join entre transactions, books y clients.
+SELECT c.name, b.title, t.type
+FROM transactions AS t
+JOIN books AS b
+  ON t.book_id = b.book_id
+JOIN clients AS c
+  ON t.client_id = c.client_id
+WHERE c.gender = 'F'
+  AND t.type = 'sell';
+
+-- Listar transactions con detalle de nombre, titulo, autoor y tipo. Con los filtro genero = M y de tipo = Vendido y Devuelto.
+-- Haciendo join entre transactions, books, clients y authors.
+SELECT c.name, b.title, a.name, t.type
+FROM transactions AS t
+JOIN books AS b
+  ON t.book_id = b.book_id
+JOIN clients AS c
+  ON t.client_id = c.client_id
+JOIN authors AS a
+  ON b.author_id = a.author_id
+WHERE c.gender = 'M'
+  AND t.type IN ('sell', 'lend');
+
   
 ```
+
+### Left JOIN, ORDER BY, DESC
+
+Siempre que se trabaje con funciones como son Sum(), Count(), Avg(), Max(), Min(), deben agregar la funcion group cuando en el select incluyan otra columna que desean mostrar aparte de la funcion de agrupamiento otra columna
+
+```sql
+  -- Uso del JOIN implícito
+SELECT b.title, a.name
+FROM authors AS a, books AS b
+WHERE a.author_id = b.author_id
+LIMIT 10;
+
+-- Uso del JOIN explícito
+SELECT b.title, a.name
+FROM books AS b
+INNER JOIN authors AS a
+  ON a.author_id = b.author_id
+LIMIT 10;
+
+--  JOIN y order by (por defecto es ASC)
+SELECT a.author_id, a.name, a.nationality, b.title
+FROM authors AS a
+JOIN books AS b
+  ON b.author_id = a.author_id
+WHERE a.author_id BETWEEN 1 AND 5
+ORDER BY a.author_id DESC;
+
+-- LEFT JOIN para traer datos incluso que no existen, como el caso del author_id = 4 que no tene ningún libro registrado.
+SELECT a.author_id, a.name, a.nationality, b.title
+FROM authors AS a
+LEFT JOIN books AS b
+  ON b.author_id = a.author_id
+WHERE a.author_id BETWEEN 1 AND 5
+ORDER BY a.author_id;
+
+-- Contar número de libros tiene un autor.
+-- Con COUNT (contar), es necesario tener un GROUP BY (agrupado por un criterio)
+SELECT a.author_id, a.name, a.nationality, COUNT(b.book_id)
+FROM authors AS a
+LEFT JOIN books AS b
+  ON b.author_id = a.author_id
+WHERE a.author_id BETWEEN 1 AND 5
+GROUP BY a.author_id
+ORDER BY a.author_id;
+```
+### DISTINT, IS NOT NULL, IS NOT IN, 
+
+```sql
+  -- 1. ¿Qué nacionalidades hay?
+  -- Mediante la clausula DISTINCT trae solo los elementos distintos
+  SELECT DISTINCT nationality 
+  FROM authors
+  ORDER BY 1;
+
+  -- 2. ¿Cuántos escritores hay de cada nacionalidad?
+  -- IS NOT NULL para traer solo los valores diferentes de nulo
+  -- NOT IN para traer valores que no sean los declarados (RUS y AUT)
+  SELECT nationality, COUNT(author_id) AS c_authors
+  FROM authors
+  WHERE nationality IS NOT NULL
+    AND nationality NOT IN ('RUS','AUT')
+  GROUP BY nationality
+  ORDER BY c_authors DESC, nationality ASC;
+```
+
+### More Query
+```sql
+  -- 4. ¿Cuál es el promedio/desviación standard del precio de libros?
+  SELECT a.nationality,  
+    AVG(b.price) AS promedio, 
+    STDDEV(b.price) AS std 
+  FROM books AS b
+  JOIN authors AS a
+    ON a.author_id = b.author_id
+  GROUP BY a.nationality
+  ORDER BY promedio DESC;
+
+  -- 5. ¿Cuál es el promedio/desviación standard del precio de libros por nacionalidad?
+  -- Agrupar por la columna pivot
+  SELECT a.nationality,
+    COUNT(b.book_id) AS libros,  
+    AVG(b.price) AS promedio, 
+    STDDEV(b.price) AS std 
+  FROM books AS b
+  JOIN authors AS a
+    ON a.author_id = b.author_id
+  GROUP BY a.nationality
+  ORDER BY libros DESC;
+
+  -- 6. ¿Cuál es el precio máximo/mínimo de un libro?
+  SELECT nationality, MAX(price), MIN(price)
+  FROM books AS b
+  JOIN authors AS a
+    ON a.author_id = b.author_id
+  GROUP BY nationality;
+
+  -- 7. ¿cómo quedaría el reporte de préstamos?
+  -- CONCAT: para concatenar en cadenas de texto.
+  -- TO_DAYS: recibe un timestamp ó un datetime
+  SELECT c.name, t.type, b.title, 
+    CONCAT(a.name, " (", a.nationality, ")") AS autor,
+    TO_DAYS(NOW()) - TO_DAYS(t.created_at)
+  FROM transactions AS t
+  LEFT JOIN clients AS c
+    ON c.client_id = t.client_id
+  LEFT JOIN books AS b
+    ON b.book_id = t.book_id
+  LEFT JOIN authors AS a
+    ON b.author_id = a.author_id;
+```
+
+### UPDATE AND DELETED
+
+```sql
+  -- Clase 19 UPDATE Y DELETE
+
+  -- Ejemplos de Delete y Update
+
+  DELETE FROM authors WHERE author_id = 161 LIMIT 1;
+
+  SELECT client_id, name FROM clients WHERE active <> 1;
+
+  UPDATE clients SET active = 0 WHERE client_id = 80 LIMIT 1;
+
+  UPDATE clients
+  SET 
+      email = 'javier@gmail.com'
+  WHERE
+      client_id = 7
+  LIMIT 1;
+
+  --Desactivar clientes con ID especifica y apellido lopez
+
+  UPDATE clients
+  SET 
+      active = 0
+  WHERE
+      client_id IN (1,6,8,27)
+      OR name like '%Lopez%';
+
+  -- Buscar con ID y Lopez
+
+  SELECT client_id, name
+  FROM clients
+  WHERE
+      client_id IN (1,6,8,27)
+      OR name like '%Lopez%';
+```
+
+### SUPER  QUERY
+
 
 ## Script del curso
 
