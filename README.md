@@ -266,8 +266,6 @@ NOTE</td>
 
 ## INSERT 
 
-
-
 ```sql  
   /*insercion en tablas*/
   INSERT INTO authors (name, nationality)
@@ -286,8 +284,14 @@ NOTE</td>
   ('Elonk Musk', 'CA'),
   ('Javier Santaolalla', 'ESP'),
   ('Freddy Vegass', 'COL');
+  
+  /*Nos permite sustituir el valor que enviamos como primary key y evita el error de duplicidad*/
+  ON DUPLICATE KEY UPDATE <dubla o celda> = VALUES(<variable de valor enviado);
+  
+  /*Insertar con query anidado - nos permite buscar en otra tabla un valor para insertarlo en la tabla donde estamos almacenando los datos*/
+  INSERT INTO books (title, author_id, `year`) VALUES ('this is the title', ( SELECT FROM  < nombre de la tabla> WHERE name = 'Nombre que recibimos), '1906);
 ```
-
+## SELECT
 
 
 
