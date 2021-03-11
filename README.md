@@ -293,7 +293,43 @@ NOTE</td>
 ```
 ## SELECT
 
+### select, from, like, where, functions
 
+```sql
+  
+  /*Traer solo una columna especifica (en este caso la columna “name”) */
+  SELECT name FROM clients;
+
+  /*Traer varias columnas especificas (en este caso la columna “name” y “gender”)*/
+   SELECT name, email, gender FROM clients 
+   
+  /* Limitar el numero de resultados (en este caso maximo 10 resultados) */
+  SELECT name, email, gender FROM clients LIMIT 10;
+  
+  /*Condicionar los resultados a una caracteristica (en este caso todos los resultados que   tengan gender con el valor “M”)*/
+  SELECT name, email, gender FROM clients WHERE gender='M';
+  
+  /*Utilizar funciones para obtener datos especificos (en este caso todas las Mujeres que   en su nombre tengan la cadena “Lop”)*/
+  SELECT name, email, YEAR(NOW()) - YEAR(birthdate) AS edad, gender
+  FROM clients
+  WHERE gender='F'
+    AND name LIKE '%Lop%';
+```
+[Funciones en SQL](https://diego.com.es/principales-funciones-en-sql)
+
+### join, 
+
+![joins](https://static.platzi.com/media/user_upload/FB_IMG_1464718822700-8fbde636-f214-40fd-8478-84114dddc1d2.jpg)
+![joins](https://static.platzi.com/media/user_upload/FB_IMG_1464718826308-8604c822-a5de-4857-8265-61480fd706dd.jpg)
+![joins](https://static.platzi.com/media/user_upload/FB_IMG_1464718830425-4b6b0a43-e326-4656-b7fe-f66ea93f431f.jpg)
+![joins](https://static.platzi.com/media/user_upload/FB_IMG_1464718833847-68334673-7ee9-4118-be6a-3320276d2e13.jpg)
+![joins](https://static.platzi.com/media/user_upload/FB_IMG_1464718837175-0039cf85-87ca-4407-9c15-baf7efa6106b.jpg)
+
+```sql
+  
+  
+  
+```
 
 ## Script del curso
 
