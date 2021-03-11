@@ -197,9 +197,50 @@ NOTE</td>
 
 ## CREATE
 
+```sql 
 
+  /* crear base de datos */
+  CREATE DATABASE IF NOT EXISTS <nombre de la base de datos>;
+  
+  /* crear una tabla books*/
+  
+  CREATE TABLE IF NOT EXISTS books (
+    book_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    author INTEGER UNSIGNED ,
+    /* no es lo mismo un dato null que un dato vacio*/
+    title VARCHAR(100) NOT NULL,
+    `year` INTEGER UNSIGNED NOT NULL DEFAULT 1990,
+    language VARCHAR(2) NOT NULL DEFAULT 'es' COMMENT 'ISO 639-1 Language',
+    /* es recomendado no guardar las imagenes en la base de datos*/
+    cover_url VARCHAR(500),
+    price DOUBLE(6,2) NOT NULL DEFAULT 10.0,
+    sellable TINYINT(1) DEFAULT 1,
+    copies INTEGER NOT NULL DEFAULT 1,
+    description TEXT
+  );
+  
+  CREATE TABLE IF NOT EXISTS authors (
+    author_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    nationality VARCHAR(3)
+  );  
+  
+```
 
+```ssh
+  /*mostrar errores al crear tablas*/
+  show warnings;
+  
+  /*eliminar tabla*/
+  drop table <nombre de la tabla>;
+  
+  /*mostrar a detalle los campos de una tabla*/
+  describe <nombre de la tabla>
+  
+  /*muestra con muchos mas detalles todas las tablas con cada tupla*/
+  show full columns from <nombre de la tabla>;
 
+```
 
 
 
