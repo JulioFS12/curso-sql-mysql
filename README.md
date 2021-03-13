@@ -1,7 +1,5 @@
 # curso-sql-mysql
 
-![banner](https://www.google.com/url?sa=i&url=https%3A%2F%2Fbhargavamin.com%2Fhow-to-do%2Fchange-mysql-server-port-ubuntu%2F&psig=AOvVaw3oQ4NTdHWAsnub3os9C6ib&ust=1615746921555000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCICC38b0re8CFQAAAAAdAAAAABAP)
-
 MySQL es un sistema de gestión de base de datos relacional en SQL, mientras que SQL (Structured Query Language) es un lenguaje estándar de programación que sirve para administrar (los sistemas de gestión de) las bases de datos, como MySQL.
 
 Existen muchos tipos de bases de datos, desde un simple archivo hasta sistemas relacionales orientados a objetos. MySQL, como base de datos relacional, utiliza múltiples tablas para almacenar y organizar la información.
