@@ -46,6 +46,61 @@ Si durante la instalacion cambiaron la contraseña por defecto, pueden correr el
   # Ver la base de datos donde estamos 
   select database();
 ```
+
+## Errores de login 
+```ssh
+  Some systems like Ubuntu, mysql is using by default the UNIX auth_socket plugin.
+
+  Basically means that: db_users using it, will be "auth" by the system user credentias. You can see if your root user is set up like this by doing the following:
+
+  $ sudo mysql -u root # I had to use "sudo" since is new installation
+
+  mysql> USE mysql;
+  mysql> SELECT User, Host, plugin FROM mysql.user;
+
+  +------------------+-----------------------+
+  | User             | plugin                |
+  +------------------+-----------------------+
+  | root             | auth_socket           |
+  | mysql.sys        | mysql_native_password |
+  | debian-sys-maint | mysql_native_password |
+  +------------------+-----------------------+
+  As you can see in the query, the root user is using the auth_socket plugin
+
+  There are 2 ways to solve this:
+
+  You can set the root user to use the mysql_native_password plugin
+  You can create a new db_user with you system_user (recommended)
+  Option 1:
+
+  $ sudo mysql -u root # I had to use "sudo" since is new installation
+
+  mysql> USE mysql;
+  mysql> UPDATE user SET plugin='mysql_native_password' WHERE User='root';
+  mysql> FLUSH PRIVILEGES;
+  mysql> exit;
+
+  $ sudo service mysql restart
+  Option 2: (replace YOUR_SYSTEM_USER with the username you have)
+
+  $ sudo mysql -u root # I had to use "sudo" since is new installation
+
+  mysql> USE mysql;
+  mysql> CREATE USER 'YOUR_SYSTEM_USER'@'localhost' IDENTIFIED BY 'YOUR_PASSWD';
+  mysql> GRANT ALL PRIVILEGES ON *.* TO 'YOUR_SYSTEM_USER'@'localhost';
+  mysql> UPDATE user SET plugin='auth_socket' WHERE User='YOUR_SYSTEM_USER';
+  mysql> FLUSH PRIVILEGES;
+  mysql> exit;
+
+  $ sudo service mysql restart
+  Remember that if you use option #2 you'll have to connect to mysql as your system username (mysql -u YOUR_SYSTEM_USER)
+
+  Note: On some systems (e.g., Debian stretch) 'auth_socket' plugin is called 'unix_socket', so the corresponding SQL command should be: UPDATE user SET plugin='unix_socket' WHERE User='YOUR_SYSTEM_USER';
+
+  Update: from @andy's comment seems that mysql 8.x.x updated/replaced the auth_socket for caching_sha2_password I don't have a system setup with mysql 8.x.x to test this, however the steps above should help you to understand the issue. Here's the reply:
+
+  One change as of MySQL 8.0.4 is that the new default authentication plugin is 'caching_sha2_password'. The new 'YOUR_SYSTEM_USER' will have this auth plugin and you can login from the bash shell now with "mysql -u YOUR_SYSTEM_USER -p" and provide the password for this user on the prompt. No need for the "UPDATE user SET plugin" step. For the 8.0.4 default auth plugin update see, https://mysqlserverteam.com/mysql-8-0-4-new-default-authentication-plugin-caching_sha2_password/
+```
 ## Las bases de datos
 
 Una base de datos es un conjunto de datos pertenecientes a un mismo contexto y almacenados sistemáticamente para su posterior uso. En este sentido; una biblioteca puede considerarse una base de datos compuesta en su mayoría por documentos y textos impresos en papel e indexados para su consulta. Actualmente, y debido al desarrollo tecnológico de campos como la informática y la electrónica, la mayoría de las bases de datos están en formato digital, siendo este un componente electrónico, por tanto se ha desarrollado y se ofrece un amplio rango de soluciones al problema del almacenamiento de datos.
