@@ -12,13 +12,33 @@ Fue escrito en C y C++ y se integra perfectamente con los lenguajes de programac
 
 Un sistema de gestión de bases de datos relacionales (RDBMS) es un programa que te permite crear, actualizar y administrar una base de datos relacional. La mayoría de los RDBMS comerciales utilizan el lenguaje de consultas estructuradas (SQL) para acceder a la base de datos, aunque SQL fue inventado después del desarrollo del modelo relacional y no es necesario para su uso.
 
-## Intallar Mysql Server Ubuntu
+## [Intallar Mysql Server Ubuntu](https://linuxhint.com/installing_mysql_workbench_ubuntu/)
 
 En Ubuntu, en consola escriben:
 ```ssh
+  # Download the apt config and install the oficial reposity to apt
+  https://dev.mysql.com/downloads/repo/apt/
+  
+  # Installation command
+  sudo apt-get install ./mysql-apt...
+  
+  # Update repository
   sudo apt-get update
+  
+  # Install mysql
   sudo apt install mysql-server
+  
+  #Set password and security configuration
   sudo mysql_secure_installation
+  
+  # Download workbench
+  https://dev.mysql.com/downloads/workbench/
+  
+  # Install workbench
+  sudo apt install ./mysql-workbench-community_8.0.20-1ubuntu20.04_amd64.deb
+  
+  # Uninstall
+   sudo apt remove mysql-workbench-community
 ```
 Para correr la consola de MySQL, simplemente corren el comando:
 ```ssh
